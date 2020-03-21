@@ -1,0 +1,71 @@
+
+
+<form class="pure-form">
+  <fieldset>
+    <label for="machineNames">Enter a list of pipe-delimited server/computer names</label>
+    <br>
+    <input style="width: 400px" type="text" placeholder="machineName1|machineName2" [(ngModel)]="machineNames" name="machineNames">
+
+    <button (click)="getServices()" class="pure-button pure-button-primary">Get Services</button>
+    <span style="margin-left: 30px" class="link-look" (click)="showAdvancedOptions()">Advanced Options</span>
+
+    <div *ngIf="advancedOptionsActive">
+      <form class="pure-form pure-form-stacked">
+        <fieldset>
+          <label for="serviceNameFilter">Enter a list of pipe-delimited service names to filter on</label>
+
+          <input style="width: 400px" (keydown)="onKeydown($event)" [(ngModel)]="serviceNameFilter" name="serviceNameFilter" class="pure-input-1-2">
+
+          <label for="remember" class="pure-checkbox">
+            <input (click)="filterOnServiceNameEnabled()" [checked]="filterByServiceName" id="remember" type="checkbox"> Filter on Service Name
+          </label>
+
+        </fieldset>
+      </form>
+
+    </div>
+  </fieldset>
+
+</form>
+
+<div *ngIf="fetchingServices">Loading...</div>
+
+
+
+<div *ngIf="servicesSet">
+  <div class='container-fluid'>
+    <div class='row'>
+      <!--<div class='col-sm-2'>
+
+      </div>-->
+      
+      <div *ngFor="let machineToService of machineToServices">
+        <div [ngClass]="classLayout()">
+          <table class="pure-table">
+            <thead>
+              <tr>
+                <th><strong>{{machineToService.machineName}}</strong></th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr class="hover-pointer" *ngFor="let service of machineToService.services">
+                <td (click)="stopService(service)" [style.color]="service.state && service.state.includes('STOPPED') ? '#fc6153' : '#6aa873'"
+                    *ngIf="!filterByServiceName || (filterByServiceName && (serviceNameFilter.includes(service.displayName)
+              || serviceNameFilter.includes(service.serviceName)))"
+                    [style.max-width]="getMaxTableCellWidth() + 'px'">
+                  <strong>{{service.displayName}}</strong> - {{service.state}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+
+        <!--<div class='col-sm-2'>
+  </div>-->
+      </div>
+  </div>
+  
+</div>
+

@@ -1,0 +1,20 @@
+.hover-pointer:hover {
+  cursor: pointer;
+  background-color: #e7e7e7;
+}
+
+.link-look {
+  color: #00b6ff;
+}
+
+
+.link-look:hover {
+  text-decoration: underline;
+  cursor:pointer;
+}
+
+td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
