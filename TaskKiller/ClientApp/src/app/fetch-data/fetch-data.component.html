@@ -17,7 +17,7 @@
           <input style="width: 400px" (keydown)="onKeydown($event)" [(ngModel)]="serviceNameFilter" name="serviceNameFilter" class="pure-input-1-2">
 
           <label for="remember" class="pure-checkbox">
-            <input (click)="filterOnServiceNameEnabled()" [checked]="filterByServiceName" id="remember" type="checkbox"> Filter on Service Name
+            <input (click)="filterOnServiceNameEnabled()" [disabled]="serviceNameFilter === ''" [checked]="filterByServiceName && serviceNameFilter !== ''" id="remember" type="checkbox"> Filter on Service Name
           </label>
 
         </fieldset>
@@ -51,8 +51,8 @@
             <tbody>
               <tr class="hover-pointer" *ngFor="let service of machineToService.services">
                 <td (click)="stopService(service)" [style.color]="service.state && service.state.includes('STOPPED') ? '#fc6153' : '#6aa873'"
-                    *ngIf="!filterByServiceName || (filterByServiceName && (serviceNameFilter.includes(service.displayName)
-              || serviceNameFilter.includes(service.serviceName)))"
+                    *ngIf="!filterByServiceName || (filterByServiceName && (service.displayName.includes(serviceNameFilter)
+              || service.serviceName.includes(serviceNameFilter)))"
                     [style.max-width]="getMaxTableCellWidth() + 'px'">
                   <strong>{{service.displayName}}</strong> - {{service.state}}
                 </td>

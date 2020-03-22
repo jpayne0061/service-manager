@@ -19,7 +19,8 @@ export class FetchDataComponent {
   public fetchedMachines: number = 0;
   public serviceNameFilter: string = "";
   public advancedOptionsActive: boolean = false;
-  public filterByServiceName: boolean = false;
+  public filterByServiceName: boolean = this.serviceNameFilter !== "";
+  public lastKeyPress: number = 0;
 
   constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
     this.getSettings();
@@ -78,6 +79,11 @@ export class FetchDataComponent {
   }
 
   public filterOnServiceNameEnabled() {
+    if (this.serviceNameFilter === "") {
+      this.filterByServiceName = false;
+      return;
+    }
+
     this.filterByServiceName = !this.filterByServiceName;
     this.setSettings();
   }
@@ -115,17 +121,30 @@ export class FetchDataComponent {
     });
   }
 
-  public onKeydown(event:any) {
-    if (event.key === "Enter") {
+  public onKeydown(event: any) {
+    if (this.serviceNameFilter !== "") {
       this.filterByServiceName = true;
+
+      this.lastKeyPress = Date.now();
+      let keyNow: number = this.lastKeyPress;
+
+      setTimeout(() => this.sendSettingsCheckDelay(keyNow), 5000);
+    }
+
+    if (this.serviceNameFilter === "") {
+      this.filterByServiceName = false;
+    }
+  }
+
+  public sendSettingsCheckDelay(keyNow: number) {
+    if (this.lastKeyPress === keyNow) {
       this.setSettings();
     }
   }
 
   public setSettings() {
-
     try {
-      this.http.post('api/Settings/', { settingsBlob: JSON.stringify({ machineNames: this.machineNames, serviceNameFilter: this.serviceNameFilter })}).subscribe(result => {
+      this.http.post('api/Settings/', { settingsBlob: JSON.stringify({ machineNames: this.machineNames, serviceNameFilter: this.serviceNameFilter }) }).subscribe(result => {
         console.log("set settings result", result);
       })
     } catch (e) {
@@ -146,6 +165,12 @@ export class FetchDataComponent {
 
           this.machineNames = settingsBlob.machineNames;
           this.serviceNameFilter = settingsBlob.serviceNameFilter;
+
+          if (this.serviceNameFilter !== "") {
+            this.filterByServiceName = true;
+            this.advancedOptionsActive = true;
+          }
+
         }
 
       })
