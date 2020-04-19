@@ -59,7 +59,7 @@ export class FetchDataComponent {
       let machineToServices: MachineToServices = new MachineToServices();
 
       machineToServices.machineName = machineName;
-      machineToServices.services = result;
+      machineToServices.services = this.sortServices(result);
 
       this.machineToServices.push(machineToServices);
 
@@ -76,6 +76,10 @@ export class FetchDataComponent {
 
   public showAdvancedOptions() {
     this.advancedOptionsActive = !this.advancedOptionsActive;
+  }
+
+  private sortServices(services: Service[]) {
+    return services.sort((a, b) => (a.displayName > b.displayName) ? 1 : 0)
   }
 
   public filterOnServiceNameEnabled() {
